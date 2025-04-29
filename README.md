@@ -95,6 +95,7 @@ RecyclingProject/
 ├── model.py                    # Model training and saving script
 ├── cam.py                      # Real-time detection using webcam
 ├── test.py                     # GPU availability check script
+├── image.py                    # Using single image detection    
 ```
 
 ## Usage
