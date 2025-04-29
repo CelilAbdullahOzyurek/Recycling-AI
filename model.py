@@ -4,8 +4,6 @@ from tensorflow.keras import Sequential
 from tensorflow.keras.layers import Dense, Flatten, Conv2D, MaxPooling2D, Dropout
 import os
 
-print("Num GPUs Available: ", len(tf.config.list_physical_devices('GPU')))
-print("TensorFlow version:", tf._version_)
 
 # To multiply images in the dataset
 train_datagen = ImageDataGenerator(

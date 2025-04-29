@@ -6,7 +6,7 @@ from tensorflow.keras.preprocessing.image import img_to_array
   
 
 # Modeli yükle
-model = load_model('modelFinal_41.h5')
+model = load_model('modelFinal_4.h5')
 capture= cv.VideoCapture(0)
 while True:
     # Görüntüyü oku
