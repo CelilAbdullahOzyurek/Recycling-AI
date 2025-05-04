@@ -5,27 +5,44 @@ from tensorflow.keras.models import load_model
 from tensorflow.keras.preprocessing.image import img_to_array
   
 
-# Modeli yükle
-model = load_model('modelFinal_4.h5')
-capture= cv.VideoCapture(0)
+
+model = load_model('model2.h5')
+
+class_names = ['glass', 'metal', 'paper', 'plastic', 'other']
+
+capture = cv.VideoCapture(0)
+
 while True:
-    # Görüntüyü oku
     ret, frame = capture.read()
-    frame=cv.resize(frame, (256, 256))
-    test_img = img_to_array(frame)
-    test_img = test_img / 255.0
-    test_img = np.expand_dims(test_img, axis=0)
-    result= model.predict(test_img)
-    result[0][0]
-    if result[0][0] > 0.5:
-        label = f"Paper ({result[0][0]*100:.2f}%)"
-    else:
-        label = f"Plastic ({(1-result[0][0])*100:.2f}%)"
+    if not ret:
+        break
+
+
+    resized_frame = cv.resize(frame, (256, 256))
+    img_array = img_to_array(resized_frame)
+    img_array = img_array / 255.0
+    img_array = np.expand_dims(img_array, axis=0)
+
+    
+    predictions = model.predict(img_array)
+    predicted_index = np.argmax(predictions[0])
+    predicted_label = class_names[predicted_index]
+    confidence = predictions[0][predicted_index]
+
+    
+    label = f"{predicted_label.capitalize()} ({confidence*100:.2f}%)"
     font = cv.FONT_HERSHEY_SIMPLEX
-    cv.putText(frame, label, (10, 40), font, 1, (255, 0, 0), 3)
-    cv.imshow('predict', frame)
+    cv.putText(resized_frame, label, (10, 40), font, 1, (255, 0, 0), 3)
+
+ 
+    cv.imshow('predict', resized_frame)
+
+  
     if cv.waitKey(1) & 0xFF == ord('d'):
         break
+
+
+
 cv.destroyAllWindows()
 capture.release()
 print("closed")
