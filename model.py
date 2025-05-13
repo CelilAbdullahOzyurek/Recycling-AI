@@ -1,81 +1,99 @@
 import tensorflow as tf
 from tensorflow.keras.preprocessing.image import ImageDataGenerator
-from tensorflow.keras import Sequential
-from tensorflow.keras.layers import Dense, Flatten, Conv2D, MaxPooling2D, Dropout , BatchNormalization
+from tensorflow.keras.applications import EfficientNetB0
+from tensorflow.keras.applications.efficientnet import preprocess_input
+from tensorflow.keras import layers, models
+import matplotlib.pyplot as plt
 import os
 
+
+
+print("Num GPUs Available: ", len(tf.config.list_physical_devices('GPU')))
 os.environ['TF_CPP_MIN_LOG_LEVEL'] = '2'
 
-# To multiply images in the dataset
-train_datagen = ImageDataGenerator(
-    rescale=1./255,
-    rotation_range=30,
-    zoom_range=0.4,
-    width_shift_range=0.3,
-    height_shift_range=0.3,
-    brightness_range=[0.5, 1.5],
-    fill_mode='nearest',
+
+
+datagen = ImageDataGenerator(
+    preprocessing_function=preprocess_input,  
+    validation_split=0.2,
     horizontal_flip=True,
-    validation_split=0.2
+    zoom_range=0.2
 )
 
-# Train data
-train_generator = train_datagen.flow_from_directory(
-    'waste/',
+train_gen = datagen.flow_from_directory(
+    "waste/",
     target_size=(256, 256),
-    batch_size=64,
-    class_mode='categorical',
+    batch_size=32,
+    class_mode='sparse',
     subset='training'
 )
 
-# Validation data
-validation_generator = train_datagen.flow_from_directory(
-    'waste/',
+val_gen = datagen.flow_from_directory(
+    "waste/",
     target_size=(256, 256),
-    batch_size=64,
-    class_mode='categorical',
+    batch_size=32,
+    class_mode='sparse',
     subset='validation'
 )
 
-# Model
-model = Sequential([
-    Conv2D(32, (3, 3), activation='relu', input_shape=(256, 256, 3)),
-    BatchNormalization(),
-    MaxPooling2D(pool_size=(2, 2)),
-    
+print("Sınıf Sıralaması:", train_gen.class_indices)
 
-    Conv2D(64, (3, 3), activation='relu'),
-    BatchNormalization(),
-    MaxPooling2D(pool_size=(2, 2)),
 
-    Conv2D(128, (3, 3), activation='relu'),
-    BatchNormalization(),
-    MaxPooling2D(pool_size=(2, 2)),
+base_model = EfficientNetB0(
+    include_top=False,
+    weights='imagenet',
+    input_shape=(256, 256, 3)
+)
+base_model.trainable = False ,
 
-    Conv2D(256, (3, 3), activation='relu'),
-    BatchNormalization(),
-    MaxPooling2D(pool_size=(2, 2)),
-
-    Flatten(),
-    
-    Dropout(0.5), # Disconnect some neurons to prevent overfitting
-    
-    Dense(512, activation='relu'),
-    Dense(5, activation='softmax') # For binary classification
+model = models.Sequential([
+    base_model,
+    layers.GlobalAveragePooling2D(),
+    layers.Dense(128, activation='relu'),
+    layers.Dropout(0.3),
+    layers.Dense(5, activation='softmax') 
 ])
 
-# Compiling the model
-model.compile(optimizer="adam", loss='categorical_crossentropy', metrics=['accuracy'])
-
-# Training the model
-history = model.fit(
-    train_generator,
-    validation_data=validation_generator,
-    epochs=40
+model.compile(
+    optimizer='adam',
+    loss='sparse_categorical_crossentropy',
+    metrics=['accuracy']
 )
 
 
-print("Model Training comleted")
-# Saving the model
-model.save('model.h5')
-print("Model Saved")
+history = model.fit(
+    train_gen,
+    validation_data=val_gen,
+    epochs=40
+)
+
+model.save("efficientnet_sequential_model.h5")
+print("Model başarıyla kaydedildi!")
+
+def plot_history(history):
+    plt.figure(figsize=(12, 4))
+
+   
+    plt.subplot(1, 2, 1)
+    plt.plot(history.history['loss'], label='Eğitim Kaybı')
+    plt.plot(history.history['val_loss'], label='Doğrulama Kaybı')
+    plt.title('Kayıp Grafiği')
+    plt.xlabel('Epoch')
+    plt.ylabel('Kayıp')
+    plt.legend()
+
+    
+    plt.subplot(1, 2, 2)
+    plt.plot(history.history['accuracy'], label='Eğitim Doğruluğu')
+    plt.plot(history.history['val_accuracy'], label='Doğrulama Doğruluğu')
+    plt.title('Doğruluk Grafiği')
+    plt.xlabel('Epoch')
+    plt.ylabel('Doğruluk')
+    plt.legend()
+
+    plt.tight_layout()
+    plt.show()
+
+
+plot_history(history)
+plt.savefig("training_plot.png")

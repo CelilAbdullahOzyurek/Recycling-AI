@@ -6,7 +6,7 @@ resized_folder = "dataset_resizer/resized_img"
 rescaled_folder = "dataset_resizer/rescale_img"
 target_size = (256, 256)
 
-# Klasörleri oluştur
+
 os.makedirs(resized_folder, exist_ok=True)
 os.makedirs(rescaled_folder, exist_ok=True)
 
@@ -24,11 +24,11 @@ for filename in os.listdir(input_folder):
 
         if (width, height) == target_size:
             output_path = os.path.join(rescaled_folder, base_filename + ".png")
-            cv2.imwrite(output_path, img)  # Orijinali direkt kopyala
+            cv2.imwrite(output_path, img) 
             print(f" okey format  {base_filename}.png")
             continue
 
-        # Boyut farklıysa yeniden boyutlandır
+    
         resized_img = cv2.resize(img, target_size)
         output_path = os.path.join(resized_folder, base_filename + ".png")
         cv2.imwrite(output_path, resized_img)
