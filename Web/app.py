@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, redirect, url_for ,Response, 
 import threading
 import os
 import uuid
+import csv
 from datetime import datetime
 from tensorflow.keras.models import load_model
 from tensorflow.keras.preprocessing.image import img_to_array
@@ -72,6 +73,9 @@ def contribute():
             return redirect(url_for('contribute'))
     return render_template("layout.html", page="contribute", class_names=class_names)
 
+@app.route('/about')
+def about():
+    return render_template("about.html", page="about")
 
 if __name__ == '__main__':
  app.run(debug=True)
