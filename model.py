@@ -70,10 +70,9 @@ history = model.fit(
 model.save("efficientnet_sequential_model.h5")
 print("Model başarıyla kaydedildi!")
 
-def plot_history(history):
+def plot_history_and_save(history, filename="training_plot.png"):
     plt.figure(figsize=(12, 4))
 
-   
     plt.subplot(1, 2, 1)
     plt.plot(history.history['loss'], label='Eğitim Kaybı')
     plt.plot(history.history['val_loss'], label='Doğrulama Kaybı')
@@ -82,7 +81,6 @@ def plot_history(history):
     plt.ylabel('Kayıp')
     plt.legend()
 
-    
     plt.subplot(1, 2, 2)
     plt.plot(history.history['accuracy'], label='Eğitim Doğruluğu')
     plt.plot(history.history['val_accuracy'], label='Doğrulama Doğruluğu')
@@ -92,8 +90,9 @@ def plot_history(history):
     plt.legend()
 
     plt.tight_layout()
-    plt.show()
+    plt.savefig(filename)
+    plt.close()
+    print(f"✅ Grafik kaydedildi: {filename}")
 
-
-plot_history(history)
-plt.savefig("training_plot.png")
+# Kullanım
+plot_history_and_save(history)
