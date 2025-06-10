@@ -15,9 +15,6 @@ This repository hosts an AI-driven waste detection and classification toolkit. I
 6. [Usage](#usage)  
    - [Training](#training)  
    - [Real-Time Detection (CLI & Web)](#real-time-detection-cli--web)  
-7. [Dataset](#dataset)  
-8. [Contact](#contact)
-
 ---
 
 ## Project Overview
@@ -149,7 +146,7 @@ python app.py
 ## Contact
 For any issues or questions, please reach out:
 - celilbus@outlook.com
-- furkansaribal@gmail.com
-- gidisburak@gmail.com
+- furkansaribal55@gmail.com
+- gidisburak1@gmail.com
 
 
