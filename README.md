@@ -107,7 +107,7 @@ Train a new model from scratch:
 python model.py --train --data_dir waste/ --epochs 50
 ```
 
-### Real-Time Detection
+### Real-Time Detection (CLI & Web)
 Use webcam to detect materials in real-time:
 ```bash
 EfficentNet80_cam.py or EfficentNet80_image.py
