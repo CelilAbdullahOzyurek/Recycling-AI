@@ -1,5 +1,5 @@
 # Recycling-AI
-This repository hosts an AI-driven waste detection and classification toolkit. It provides easy-to-use scripts for training a model on your own waste image dataset and running inference on photos or live camera feeds to automatically sort items into categories like plastic, paper, glass, metal, and other
+This repository hosts an AI-driven waste detection and classification toolkit. It provides easy-to-use scripts for training a model on your own waste image dataset and running inference on photos to automatically sort items into categories like plastic, paper, glass, metal, and other
 
 # AI-Powered Waste Detection and Classification
 
@@ -14,18 +14,16 @@ This repository hosts an AI-driven waste detection and classification toolkit. I
 5. [Directory Structure](#directory-structure)  
 6. [Usage](#usage)  
    - [Training](#training)  
-   - [Real-Time Detection](#real-time-detection)  
-   - [GPU Verification](#gpu-verification)  
+   - [Real-Time Detection (CLI & Web)](#real-time-detection-cli--web)  
 7. [Dataset](#dataset)  
 8. [Contact](#contact)
 
 ---
 
 ## Project Overview
-This project develops an AI system to automate waste detection and classification. It processes **static images** and **real-time video streams** to recognize materials like plastic, paper, glass, and metal.
+This project develops an AI system to automate waste detection and classification. It processes **static images** to recognize materials like plastic, paper, glass, and metal.
 
 ## Features
-- **Real-time video detection** using webcam  
 - **Static image classification**  
 - **Multi-class detection** (Plastic, Paper, Glass, Metal, Organic)  
 - **GPU-accelerated training and inference**  
@@ -87,15 +85,18 @@ python cam.py --image path/to/image.jpg --device cpu
 ## Directory Structure
 ```
 RecyclingProject/
+├──Web                         # Web components and interface
+<├──testData
+├──dataset_resizer             # For resize dataset iamges to valid resolation
 ├── waste/                     # Raw and labeled datasets
 │   ├── Paper/
 │   ├── Plastic/
 │   └── (Other categories)
 ├── README.md                   # This README file
 ├── model.py                    # Model training and saving script
-├── cam.py                      # Real-time detection using webcam
-├── test.py                     # GPU availability check script
-├── image.py                    # Using single image detection    
+├── EfficentNet80_cam.py        # Real-time detection using webcam
+├── .gitignore
+├── EfficentNet80_image.py      # Using single image detection    
 ```
 
 ## Usage
@@ -109,25 +110,41 @@ python model.py --train --data_dir waste/ --epochs 50
 ### Real-Time Detection
 Use webcam to detect materials in real-time:
 ```bash
-python cam.py
+EfficentNet80_cam.py or EfficentNet80_image.py
 ```
+## 🌐 Web Interface
 
-### GPU Verification
-Test whether TensorFlow detects your GPU properly:
+A lightweight web interface built with Flask is included to allow real-time interaction with the AI waste classification system. Users can upload images for classification or contribute labeled data to improve the dataset.
+
+### 🔗 Available Routes
+
+- **`/`** – Home page with project overview and navigation buttons  
+- **`/predict`** – Upload a waste image and receive predicted label + confidence score  
+- **`/contribute`** – Manually upload labeled images to grow the local dataset  
+- **`/about`** – Project description, goals, and technologies used  
+
+### 🛠️ Tech Stack
+
+| Component           | Technology                          |
+|---------------------|--------------------------------------|
+| Web Framework       | Flask (Python 3.11)                  |
+| Frontend            | HTML5, Bootstrap 5.3                 |
+| AI Model Integration| TensorFlow 2.19.0 + EfficientNetB0  |
+| Image Processing    | OpenCV (cv2), NumPy                  |
+| Data Logging        | CSV file (`metadata.csv`)            |
+
+### 🚀 Run Locally
+
 ```bash
-python test.py
-```
-Expected output:
-```
-TensorFlow Version: 2.19.0
-GPUs: [PhysicalDevice(name='/physical_device:GPU:0', device_type='GPU')]
-```
+# Make sure virtual environment and dependencies are installed
+python app.py
+
 
 ## Dataset
 - Dataset sourced from Kaggle, Google Open Images, etc.
-- Images are categorized into: **Plastic**, **Paper**, **Glass**, **Metal**, **Organic Waste**.
+- Images are categorized into: **Plastic**, **Paper**, **Glass**, **Metal**, **Others**.
 - Dataset folder is `waste/`.  
-- Dataset sharing links will be provided separately if necessary.
+
 
 ## Contact
 For any issues or questions, please reach out:
